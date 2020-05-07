@@ -46,9 +46,11 @@ async fn client_msg(id: &str, msg: Message, clients: &Clients) {
         Ok(v) => v,
         Err(_) => return,
     };
+
     if message == "ping" || message == "ping\n" {
         return;
     }
+
     let topics_req: TopicsRequest = match from_str(&message) {
         Ok(v) => v,
         Err(e) => {
