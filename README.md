@@ -21,7 +21,7 @@ Then, you can publish messages using
 
 ```bash
 curl -X POST 'http://localhost:8000/publish' \
-    --H 'Content-Type: application/json' \
-    --d '{"user_id": 1, "topic": "cats", "message": "are awesome"}'
+    -H 'Content-Type: application/json' \
+    -d '{"user_id": 1, "topic": "cats", "message": "are awesome"}'
 ```
 
