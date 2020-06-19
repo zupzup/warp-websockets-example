@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 use std::convert::Infallible;
 use std::sync::Arc;
-use tokio::sync::{mpsc, Mutex};
+use tokio::sync::{mpsc, RwLock};
 use warp::{ws::Message, Filter, Rejection};
 
 mod handler;
 mod ws;
 
 type Result<T> = std::result::Result<T, Rejection>;
-type Clients = Arc<Mutex<HashMap<String, Client>>>;
+type Clients = Arc<RwLock<HashMap<String, Client>>>;
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -19,7 +19,7 @@ pub struct Client {
 
 #[tokio::main]
 async fn main() {
-    let clients: Clients = Arc::new(Mutex::new(HashMap::new()));
+    let clients: Clients = Arc::new(RwLock::new(HashMap::new()));
 
     let health_route = warp::path!("health").and_then(handler::health_handler);
 

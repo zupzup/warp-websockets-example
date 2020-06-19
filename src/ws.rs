@@ -21,7 +21,7 @@ pub async fn client_connection(ws: WebSocket, id: String, clients: Clients, mut 
     }));
 
     client.sender = Some(client_sender);
-    clients.lock().await.insert(id.clone(), client);
+    clients.write().await.insert(id.clone(), client);
 
     println!("{} connected", id);
 
@@ -36,7 +36,7 @@ pub async fn client_connection(ws: WebSocket, id: String, clients: Clients, mut 
         client_msg(&id, msg, &clients).await;
     }
 
-    clients.lock().await.remove(&id);
+    clients.write().await.remove(&id);
     println!("{} disconnected", id);
 }
 
@@ -59,7 +59,7 @@ async fn client_msg(id: &str, msg: Message, clients: &Clients) {
         }
     };
 
-    let mut locked = clients.lock().await;
+    let mut locked = clients.write().await;
     match locked.get_mut(id) {
         Some(v) => {
             v.topics = topics_req.topics;

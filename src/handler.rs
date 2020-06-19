@@ -22,9 +22,9 @@ pub struct Event {
 
 pub async fn publish_handler(body: Event, clients: Clients) -> Result<impl Reply> {
     clients
-        .lock()
+        .read()
         .await
-        .iter_mut()
+        .iter()
         .filter(|(_, client)| match body.user_id {
             Some(v) => client.user_id == v,
             None => true,
@@ -50,7 +50,7 @@ pub async fn register_handler(body: RegisterRequest, clients: Clients) -> Result
 }
 
 async fn register_client(id: String, user_id: usize, clients: Clients) {
-    clients.lock().await.insert(
+    clients.write().await.insert(
         id,
         Client {
             user_id,
@@ -61,12 +61,12 @@ async fn register_client(id: String, user_id: usize, clients: Clients) {
 }
 
 pub async fn unregister_handler(id: String, clients: Clients) -> Result<impl Reply> {
-    clients.lock().await.remove(&id);
+    clients.write().await.remove(&id);
     Ok(StatusCode::OK)
 }
 
 pub async fn ws_handler(ws: warp::ws::Ws, id: String, clients: Clients) -> Result<impl Reply> {
-    let client = clients.lock().await.get(&id).cloned();
+    let client = clients.read().await.get(&id).cloned();
     match client {
         Some(c) => Ok(ws.on_upgrade(move |socket| ws::client_connection(socket, id, clients, c))),
         None => Err(warp::reject::not_found()),
