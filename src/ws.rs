@@ -60,10 +60,7 @@ async fn client_msg(id: &str, msg: Message, clients: &Clients) {
     };
 
     let mut locked = clients.write().await;
-    match locked.get_mut(id) {
-        Some(v) => {
-            v.topics = topics_req.topics;
-        }
-        None => return,
-    };
+    if let Some(v) = locked.get_mut(id) {
+        v.topics = topics_req.topics;
+    }
 }
