@@ -13,6 +13,11 @@ pub struct RegisterResponse {
     url: String,
 }
 
+#[derive(Serialize, Debug)]
+pub struct RegisterArrayResponse {
+    urls: Vec<String>,
+}
+
 #[derive(Deserialize, Debug)]
 pub struct Event {
     topic: String,
@@ -58,6 +63,18 @@ async fn register_client(id: String, user_id: usize, clients: Clients) {
             sender: None,
         },
     );
+}
+
+pub async fn get_registered_clients_handler(clients: Clients) -> Result<impl Reply> {
+    let mut outp = Vec::new();
+    
+    clients.read().await.iter().for_each(|(id, _)| {
+      outp.push(id.clone());
+    });
+    
+    Ok(json(&RegisterArrayResponse{
+        urls: outp
+    }))
 }
 
 pub async fn unregister_handler(id: String, clients: Clients) -> Result<impl Reply> {

@@ -33,7 +33,11 @@ async fn main() {
             .and(warp::delete())
             .and(warp::path::param())
             .and(with_clients(clients.clone()))
-            .and_then(handler::unregister_handler));
+            .and_then(handler::unregister_handler))
+        .or(register
+            .and(warp::get())
+            .and(with_clients(clients.clone()))
+            .and_then(handler::get_registered_clients_handler));
 
     let publish = warp::path!("publish")
         .and(warp::body::json())
