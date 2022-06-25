@@ -3,6 +3,7 @@ use futures::{FutureExt, StreamExt};
 use serde::Deserialize;
 use serde_json::from_str;
 use tokio::sync::mpsc;
+use tokio_stream::wrappers::UnboundedReceiverStream;
 use warp::ws::{Message, WebSocket};
 
 #[derive(Deserialize, Debug)]
@@ -14,6 +15,7 @@ pub async fn client_connection(ws: WebSocket, id: String, clients: Clients, mut 
     let (client_ws_sender, mut client_ws_rcv) = ws.split();
     let (client_sender, client_rcv) = mpsc::unbounded_channel();
 
+    let client_rcv = UnboundedReceiverStream::new(client_rcv);
     tokio::task::spawn(client_rcv.forward(client_ws_sender).map(|result| {
         if let Err(e) = result {
             eprintln!("error sending websocket msg: {}", e);
