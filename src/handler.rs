@@ -41,7 +41,7 @@ pub async fn publish_handler(body: Event, clients: Clients) -> Result<impl Reply
 
 pub async fn register_handler(body: RegisterRequest, clients: Clients) -> Result<impl Reply> {
     let user_id = body.user_id;
-    let uuid = Uuid::new_v4().simple().to_string();
+    let uuid = Uuid::new_v4().as_simple().to_string();
 
     register_client(uuid.clone(), user_id, clients).await;
     Ok(json(&RegisterResponse {
