@@ -1,8 +1,9 @@
+
 [package]
-name = "warp-websockets-example"
+name = "wsserver"
 version = "0.1.1"
 authors = ["Mario Zupan <mario@zupzup.org>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 tokio = { version = "1.19.2", features = ["macros", "sync", "rt-multi-thread"] }
